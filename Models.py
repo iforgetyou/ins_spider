@@ -1,10 +1,18 @@
-class Img(object):
-    def __init__(self):
-        self.image_url = ''
-        self.video_url = ''
+import sys
 
-        # def __init__(self, id, image_url, video_url):
-        #     super().__init__()
-        #     self.id = id
-        #     self.image_url = image_url
-        #     self.video_url = video_url
+sys.path.append('/Applications/google-cloud-sdk/platform/google_appengine/')
+sys.path.append('/Applications/google-cloud-sdk/platform/google_appengine/lib/yaml/lib/')
+if 'google' in sys.modules:
+    del sys.modules['google']
+
+# import google
+# print google.__path__
+
+class InsImage(object):
+    def __init__(self):
+        self.id = None
+        self.image_url = None
+        self.video_url = None
+        self.owner = None
+
+

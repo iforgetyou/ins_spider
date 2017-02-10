@@ -7,8 +7,9 @@ import ssl
 import re
 import time
 import json
+import logging
 
-from Models import Img
+from Models import InsImage
 
 base_url = 'https://www.instagram.com'
 
@@ -30,21 +31,21 @@ class BS4Ins(object):
         # response = urllib.request.urlopen('https://www.instagram.com/cherry_quahst/')
         # response = urllib2.request.urlopen(url) # 3.6
         response = urllib2.urlopen(url)  # 2.7
-        print(response.getcode())
+        logging.info(response.getcode())
         html_doc = response.read()
 
         # 构建soup
         soup = BeautifulSoup(html_doc, "lxml")
 
         # 打印全部
-        # print(soup.prettify())
-        print("---------------------------------------------------------------------------------")
+        # logging.debug(soup.prettify())
+        logging.debug("---------------------------------------------------------------------------------")
         images = []
         # 直接通过data数据找url
         for tag in soup.find_all(text=re.compile('_sharedData')):
             # 找到json数据,替换掉多余数据
             json_data = tag.replace('window._sharedData = ', '').replace(';', '')
-            print(json_data)
+            logging.info(json_data)
             data = json.loads(json_data)
             # 主页处理
             if 'ProfilePage' in data['entry_data']:
@@ -53,9 +54,10 @@ class BS4Ins(object):
                     nodes = page['user']['media']['nodes']
                     # 遍历节点
                     for node in nodes:
-                        img = Img()
+                        img = InsImage()
                         img.id = node['id']
                         img.image_url = node['display_src']
+                        img.owner = node['owner']
                         # 判断图片或者视频
                         if node['is_video']:
                             # 视频
@@ -77,7 +79,7 @@ class BS4Ins(object):
 def find_video_url(url):
     # response = urllib.request.urlopen(url)
     response = urllib2.urlopen(url)
-    print(response.getcode())
+    logging.info(response.getcode())
     html_doc = response.read()
 
     # 构建soup
@@ -86,7 +88,7 @@ def find_video_url(url):
     for tag in soup.find_all(text=re.compile('_sharedData')):
         # 找到json数据,替换掉多余数据
         json_data = tag.replace('window._sharedData = ', '').replace(';', '')
-        print(json_data)
+        logging.info(json_data)
         data = json.loads(json_data)
 
     # 视频页面处理
